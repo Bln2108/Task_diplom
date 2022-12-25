@@ -11,8 +11,11 @@ import static ru.netology.diploma.page.FieldHelper.findField;
 import static ru.netology.diploma.page.FieldHelper.findSpan;
 
 public class CardPage {
+    @Getter
+    private final SelenideElement numberSpan =
+            findSpan("Номер карты");
     private final SelenideElement numberField =
-            findField("Номер карты");
+            findField(numberSpan);
     @Getter
     private final SelenideElement monthSpan =
             findSpan("Месяц");
@@ -23,10 +26,16 @@ public class CardPage {
             findSpan("Год");
     private final SelenideElement yearField =
             findField(yearSpan);
+    @Getter
+    private final SelenideElement ownerSpan =
+            findSpan("Владелец");
     private final SelenideElement ownerField =
-            findField("Владелец");
+            findField(ownerSpan);
+    @Getter
+    private final SelenideElement securityCodeSpan =
+            findSpan("CVC/CVV");
     private final SelenideElement securityCodeField =
-            findField("CVC/CVV");
+            findField(securityCodeSpan);
     private final SelenideElement proceedButton =
             findButton("Продолжить");
 
@@ -44,6 +53,10 @@ public class CardPage {
                 .getYear());
         ownerField.sendKeys(cardInfo.getOwner());
         securityCodeField.sendKeys(cardInfo.getSecurityCode());
+        proceedButton.click();
+    }
+
+    public void validProceed() {
         proceedButton.click();
     }
 }

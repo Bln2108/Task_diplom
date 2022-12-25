@@ -6,7 +6,9 @@ import io.qameta.allure.selenide.AllureSelenide;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import ru.netology.diploma.data.CardInfo;
 import ru.netology.diploma.data.DataHelper;
+import ru.netology.diploma.data.ValidThru;
 import ru.netology.diploma.page.CardPage;
 import ru.netology.diploma.page.LandingPage;
 
@@ -21,11 +23,11 @@ class ShopTest {
     static void setUpAll() {
         SelenideLogger.addListener("allure", new AllureSelenide());
     }
+
     @AfterAll
     static void tearDownAll() {
         SelenideLogger.removeListener("allure");
     }
-
 
     @Test
     void shouldBuy() {
@@ -53,6 +55,28 @@ class ShopTest {
         cardPage.getYearSpan()
                 .shouldHave(Condition.cssClass("input_invalid"));
         landingPage.getOkNotification()
+                .shouldNotBe(Condition.visible);
+        landingPage.getErrorNotification()
+                .shouldNotBe(Condition.visible);
+    }
+
+    @Test
+    void shouldNotBuyTooFarYear() {
+        open("http://localhost:8080");
+        LandingPage landingPage = new LandingPage();
+        CardPage cardPage = landingPage.validBuy();
+        cardPage.validProceed(DataHelper.getCardInfo(
+                DataHelper.getApprovedCardNumber(),
+                LocalDate.now()
+                        .plusYears(6)
+        ));
+        cardPage.getMonthSpan()
+                .shouldNotHave(Condition.cssClass("input_invalid"));
+        cardPage.getYearSpan()
+                .shouldHave(Condition.cssClass("input_invalid"));
+        landingPage.getOkNotification()
+                .shouldNotBe(Condition.visible);
+        landingPage.getErrorNotification()
                 .shouldNotBe(Condition.visible);
     }
 
@@ -83,6 +107,44 @@ class ShopTest {
         }
         landingPage.getOkNotification()
                 .shouldNotBe(Condition.visible);
+        landingPage.getErrorNotification()
+                .shouldNotBe(Condition.visible);
+    }
+
+    @Test
+    void shouldNotBuyBadValidThru() {
+        open("http://localhost:8080");
+        LandingPage landingPage = new LandingPage();
+        CardPage cardPage = landingPage.validBuy();
+        cardPage.validProceed(DataHelper.getCardInfo(
+                DataHelper.getApprovedCardNumber(),
+                DataHelper.getBadValidThru(LocalDate.now()),
+                DataHelper.getOwnerInLat()
+        ));
+        cardPage.getMonthSpan()
+                .shouldHave(Condition.cssClass("input_invalid"));
+        landingPage.getOkNotification()
+                .shouldNotBe(Condition.visible);
+        landingPage.getErrorNotification()
+                .shouldNotBe(Condition.visible);
+    }
+
+    @Test
+    void shouldNotBuyOwnerInCyr() {
+        open("http://localhost:8080");
+        LandingPage landingPage = new LandingPage();
+        CardPage cardPage = landingPage.validBuy();
+        cardPage.validProceed(DataHelper.getCardInfo(
+                DataHelper.getApprovedCardNumber(),
+                DataHelper.getDate(),
+                DataHelper.getOwnerInCyr()
+        ));
+        cardPage.getOwnerSpan()
+                .shouldHave(Condition.cssClass("input_invalid"));
+        landingPage.getOkNotification()
+                .shouldNotBe(Condition.visible);
+        landingPage.getErrorNotification()
+                .shouldNotBe(Condition.visible);
     }
 
     @Test
@@ -94,6 +156,65 @@ class ShopTest {
                 DataHelper.getDeclinedCardNumber()));
         landingPage.getErrorNotification()
                 .shouldBe(Condition.visible, Duration.ofSeconds(15));
+    }
+
+    @Test
+    void shouldNotBuyOther() {
+        open("http://localhost:8080");
+        LandingPage landingPage = new LandingPage();
+        CardPage cardPage = landingPage.validBuy();
+        cardPage.validProceed(DataHelper.getCardInfo(
+                DataHelper.getOtherCardNumber()));
+        landingPage.getErrorNotification()
+                .shouldBe(Condition.visible, Duration.ofSeconds(15));
+    }
+
+    @Test
+    void shouldNotBuyAllEmpty() {
+        open("http://localhost:8080");
+        LandingPage landingPage = new LandingPage();
+        CardPage cardPage = landingPage.validBuy();
+        cardPage.validProceed();
+        cardPage.getNumberSpan()
+                .shouldHave(Condition.cssClass("input_invalid"));
+        cardPage.getMonthSpan()
+                .shouldHave(Condition.cssClass("input_invalid"));
+        cardPage.getYearSpan()
+                .shouldHave(Condition.cssClass("input_invalid"));
+        cardPage.getOwnerSpan()
+                .shouldHave(Condition.cssClass("input_invalid"));
+        cardPage.getSecurityCodeSpan()
+                .shouldHave(Condition.cssClass("input_invalid"));
+        landingPage.getOkNotification()
+                .shouldNotBe(Condition.visible);
+        landingPage.getErrorNotification()
+                .shouldNotBe(Condition.visible);
+    }
+
+    @Test
+    void shouldNotBuyZero() {
+        open("http://localhost:8080");
+        LandingPage landingPage = new LandingPage();
+        CardPage cardPage = landingPage.validBuy();
+        cardPage.validProceed(new CardInfo(
+                DataHelper.getApprovedCardNumber(),
+                new ValidThru(
+                        "0",
+                        "0"
+                ),
+                DataHelper.getOwnerInLat(),
+                "0"
+        ));
+        cardPage.getMonthSpan()
+                .shouldHave(Condition.cssClass("input_invalid"));
+        cardPage.getYearSpan()
+                .shouldHave(Condition.cssClass("input_invalid"));
+        cardPage.getSecurityCodeSpan()
+                .shouldHave(Condition.cssClass("input_invalid"));
+        landingPage.getOkNotification()
+                .shouldNotBe(Condition.visible);
+        landingPage.getErrorNotification()
+                .shouldNotBe(Condition.visible);
     }
 
     @Test
@@ -122,6 +243,28 @@ class ShopTest {
         cardPage.getYearSpan()
                 .shouldHave(Condition.cssClass("input_invalid"));
         landingPage.getOkNotification()
+                .shouldNotBe(Condition.visible);
+        landingPage.getErrorNotification()
+                .shouldNotBe(Condition.visible);
+    }
+
+    @Test
+    void shouldNotCreditTooFarYear() {
+        open("http://localhost:8080");
+        LandingPage landingPage = new LandingPage();
+        CardPage cardPage = landingPage.validCredit();
+        cardPage.validProceed(DataHelper.getCardInfo(
+                DataHelper.getApprovedCardNumber(),
+                LocalDate.now()
+                        .plusYears(6)
+        ));
+        cardPage.getMonthSpan()
+                .shouldNotHave(Condition.cssClass("input_invalid"));
+        cardPage.getYearSpan()
+                .shouldHave(Condition.cssClass("input_invalid"));
+        landingPage.getOkNotification()
+                .shouldNotBe(Condition.visible);
+        landingPage.getErrorNotification()
                 .shouldNotBe(Condition.visible);
     }
 
@@ -152,6 +295,44 @@ class ShopTest {
         }
         landingPage.getOkNotification()
                 .shouldNotBe(Condition.visible);
+        landingPage.getErrorNotification()
+                .shouldNotBe(Condition.visible);
+    }
+
+    @Test
+    void shouldNotCreditBadValidThru() {
+        open("http://localhost:8080");
+        LandingPage landingPage = new LandingPage();
+        CardPage cardPage = landingPage.validCredit();
+        cardPage.validProceed(DataHelper.getCardInfo(
+                DataHelper.getApprovedCardNumber(),
+                DataHelper.getBadValidThru(LocalDate.now()),
+                DataHelper.getOwnerInLat()
+        ));
+        cardPage.getMonthSpan()
+                .shouldHave(Condition.cssClass("input_invalid"));
+        landingPage.getOkNotification()
+                .shouldNotBe(Condition.visible);
+        landingPage.getErrorNotification()
+                .shouldNotBe(Condition.visible);
+    }
+
+    @Test
+    void shouldNotCreditOwnerInCyr() {
+        open("http://localhost:8080");
+        LandingPage landingPage = new LandingPage();
+        CardPage cardPage = landingPage.validCredit();
+        cardPage.validProceed(DataHelper.getCardInfo(
+                DataHelper.getApprovedCardNumber(),
+                DataHelper.getDate(),
+                DataHelper.getOwnerInCyr()
+        ));
+        cardPage.getOwnerSpan()
+                .shouldHave(Condition.cssClass("input_invalid"));
+        landingPage.getOkNotification()
+                .shouldNotBe(Condition.visible);
+        landingPage.getErrorNotification()
+                .shouldNotBe(Condition.visible);
     }
 
     @Test
@@ -163,5 +344,64 @@ class ShopTest {
                 DataHelper.getDeclinedCardNumber()));
         landingPage.getErrorNotification()
                 .shouldBe(Condition.visible, Duration.ofSeconds(15));
+    }
+
+    @Test
+    void shouldNotCreditOther() {
+        open("http://localhost:8080");
+        LandingPage landingPage = new LandingPage();
+        CardPage cardPage = landingPage.validCredit();
+        cardPage.validProceed(DataHelper.getCardInfo(
+                DataHelper.getOtherCardNumber()));
+        landingPage.getErrorNotification()
+                .shouldBe(Condition.visible, Duration.ofSeconds(15));
+    }
+
+    @Test
+    void shouldNotCreditAllEmpty() {
+        open("http://localhost:8080");
+        LandingPage landingPage = new LandingPage();
+        CardPage cardPage = landingPage.validCredit();
+        cardPage.validProceed();
+        cardPage.getNumberSpan()
+                .shouldHave(Condition.cssClass("input_invalid"));
+        cardPage.getMonthSpan()
+                .shouldHave(Condition.cssClass("input_invalid"));
+        cardPage.getYearSpan()
+                .shouldHave(Condition.cssClass("input_invalid"));
+        cardPage.getOwnerSpan()
+                .shouldHave(Condition.cssClass("input_invalid"));
+        cardPage.getSecurityCodeSpan()
+                .shouldHave(Condition.cssClass("input_invalid"));
+        landingPage.getOkNotification()
+                .shouldNotBe(Condition.visible);
+        landingPage.getErrorNotification()
+                .shouldNotBe(Condition.visible);
+    }
+
+    @Test
+    void shouldNotCreditZero() {
+        open("http://localhost:8080");
+        LandingPage landingPage = new LandingPage();
+        CardPage cardPage = landingPage.validCredit();
+        cardPage.validProceed(new CardInfo(
+                DataHelper.getApprovedCardNumber(),
+                new ValidThru(
+                        "0",
+                        "0"
+                ),
+                DataHelper.getOwnerInLat(),
+                "0"
+        ));
+        cardPage.getMonthSpan()
+                .shouldHave(Condition.cssClass("input_invalid"));
+        cardPage.getYearSpan()
+                .shouldHave(Condition.cssClass("input_invalid"));
+        cardPage.getSecurityCodeSpan()
+                .shouldHave(Condition.cssClass("input_invalid"));
+        landingPage.getOkNotification()
+                .shouldNotBe(Condition.visible);
+        landingPage.getErrorNotification()
+                .shouldNotBe(Condition.visible);
     }
 }

@@ -18,7 +18,12 @@ public final class DataHelper {
             DateTimeFormatter.ofPattern("MM");
     public static final DateTimeFormatter YEAR_FORMATTER =
             DateTimeFormatter.ofPattern("yy");
-    private static final Faker FAKER =
+    private static final Faker FAKER_EN =
+            new Faker(
+                    new Locale("en"),
+                    RANDOM
+            );
+    private static final Faker FAKER_RU =
             new Faker(
                     new Locale("ru"),
                     RANDOM
@@ -32,15 +37,64 @@ public final class DataHelper {
         return "4444444444444442";
     }
 
-    private static LocalDate getDate() {
+    public static String getOtherCardNumber() {
+        return "4444444444444443";
+    }
+
+    public static LocalDate getDate() {
         return LocalDate.now()
                 .plusDays(RANDOM.nextInt(366));
     }
 
-    private static CardInfo.ValidThru getValidThru(LocalDate date) {
-        return new CardInfo.ValidThru(
+    private static ValidThru getValidThru(LocalDate date) {
+        return new ValidThru(
                 MONTH_FORMATTER.format(date),
                 YEAR_FORMATTER.format(date)
+        );
+    }
+
+    public static ValidThru getBadValidThru(LocalDate date) {
+        return new ValidThru(
+                Integer.toString(RANDOM.nextInt(87) + 13),
+                YEAR_FORMATTER.format(date)
+        );
+    }
+
+    private static String getOwner(Name name) {
+        return name.firstName() + ' ' + name.lastName();
+    }
+
+    public static String getOwnerInLat() {
+        return getOwner(FAKER_EN.name());
+    }
+
+    public static String getOwnerInCyr() {
+        return getOwner(FAKER_RU.name());
+    }
+
+    public static CardInfo getCardInfo(
+            String number,
+            ValidThru validThru,
+            String owner
+    ) {
+        return new CardInfo(
+                number,
+                validThru,
+                owner,
+                FAKER_EN.number()
+                        .digits(3)
+        );
+    }
+
+    public static CardInfo getCardInfo(
+            String number,
+            LocalDate date,
+            String owner
+    ) {
+        return getCardInfo(
+                number,
+                getValidThru(date),
+                owner
         );
     }
 
@@ -48,21 +102,18 @@ public final class DataHelper {
             String number,
             LocalDate date
     ) {
-        Name name = FAKER.name();
-
-        return new CardInfo(
+        return getCardInfo(
                 number,
-                getValidThru(date),
-                name.firstName() + ' ' + name.lastName(),
-                FAKER.number()
-                        .digits(3)
+                date,
+                getOwnerInLat()
         );
     }
 
     public static CardInfo getCardInfo(String number) {
         return getCardInfo(
                 number,
-                getDate()
+                getDate(),
+                getOwnerInLat()
         );
     }
 }

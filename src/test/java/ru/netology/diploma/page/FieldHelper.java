@@ -19,8 +19,4 @@ final class FieldHelper {
     static SelenideElement findField(SelenideElement span) {
         return span.find("input.input__control");
     }
-
-    static SelenideElement findField(String text) {
-        return findField(findSpan(text));
-    }
 }

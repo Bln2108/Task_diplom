@@ -8,7 +8,6 @@ dataSources/
 *.iws
 *.ipr
 *.iml
-*.cmd
 Thumbs.db*
 .DS_Store*
 node_modules
