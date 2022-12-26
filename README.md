@@ -10,6 +10,6 @@
 
 Отчётные документы по итогам автоматизированного тестирования - https://github.com/Bln2108/Task_diplom/blob/master/DOCS/Report.md
 
-Отчётные документы по итогам автоматизации -`DOCS\Summary.cmd`
+Отчётные документы по итогам автоматизации - https://github.com/Bln2108/Task_diplom/blob/master/DOCS/Summary.md
 
  
