@@ -8,7 +8,7 @@
 Для старта приложения с использованием СУБД PostgreSQL скопируйте файл application-postgres.properties в application.properties и запустите скрипт start-app.cmd. Для старта приложения с использованием СУБД MySQL скопируйте файл application-mysql.properties в application.properties и запустите скрипт start-app.cmd 5.Для старта UI-тестов запустите скрипт start-test.cmd
 
 
-Отчётные документы по итогам автоматизированного тестирования - DOCS/Report.md
+Отчётные документы по итогам автоматизированного тестирования - https://github.com/Bln2108/Task_diplom/blob/2794f2287e9f278aa163e3ae87d26f6951ca45ee/DOCS/Report.md
 
 Отчётные документы по итогам автоматизации - 
 
