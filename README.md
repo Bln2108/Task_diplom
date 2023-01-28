@@ -1,4 +1,4 @@
-План автоматизации тестирование - DOCS/Plan.md
+План автоматизации тестирование - [DOCS/Plan.md](https://github.com/Bln2108/Task_diplom/blob/40fce086a184f21e5957444fe34af68fa35d3a4b/DOCS/Plan.md)
 
 Для запуска тестов необходимо осуществить:
 
